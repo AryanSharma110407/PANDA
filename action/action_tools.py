@@ -411,3 +411,36 @@ def handle_undo(target: str, session_id: str) -> str:
     
     return result["details"]
 
+
+def handle_open_application(app_name: str, web_fallback_url: str, session_id: str) -> str:
+    """
+    Attempts to open a desktop application if installed locally.
+    Otherwise, falls back to opening its web version in the default browser.
+    """
+    from action import app_detector
+    
+    action_executor.reset_stop()
+    print(f"  [ActionTools] Checking if '{app_name}' is installed locally...")
+    
+    is_installed = app_detector.is_app_installed(app_name)
+    
+    if is_installed:
+        print(f"  [ActionTools] App '{app_name}' is installed. Launching via System Search...")
+        result = handle_system_search(app_name, session_id)
+        _log_action(session_id, "open_application", f"{app_name} (local)", None, None, True, True)
+        return f"I launched the desktop application '{app_name}'. {result}"
+    else:
+        fallback_url = web_fallback_url.strip() if web_fallback_url else ""
+        if not fallback_url:
+            # Construct a default web address if none provided
+            fallback_url = f"https://www.google.com/search?q={app_name.replace(' ', '+')}"
+            print(f"  [ActionTools] App '{app_name}' not found. Falling back to Google search: {fallback_url}")
+            result = handle_browser_search(app_name, session_id)
+            _log_action(session_id, "open_application", f"{app_name} (web search fallback)", None, None, True, False)
+            return f"I couldn't find the desktop app '{app_name}' installed locally. I searched for it in the browser. {result}"
+        else:
+            print(f"  [ActionTools] App '{app_name}' not found. Falling back to web URL: {fallback_url}")
+            result = handle_browser_open(fallback_url, session_id)
+            _log_action(session_id, "open_application", f"{app_name} (web fallback to {fallback_url})", None, None, True, True)
+            return f"I couldn't find the desktop app '{app_name}' installed locally. I opened its web version in the browser instead. {result}"
+

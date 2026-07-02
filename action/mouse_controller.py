@@ -146,7 +146,9 @@ def click(x: int, y: int) -> dict:
     _check_available()
     _check_stop()
     x, y = _clamp_coords(x, y)
-    move_to(x, y, duration=0.75)  # Smoothly move first
+    wait_for_user_idle(0.5)
+    pyautogui.moveTo(x, y, duration=0.75)  # Smoothly move first
+    _check_stop()
     pyautogui.click()
     return {"success": True, "action": "click", "coords": (x, y)}
 
@@ -156,7 +158,9 @@ def right_click(x: int, y: int) -> dict:
     _check_available()
     _check_stop()
     x, y = _clamp_coords(x, y)
-    move_to(x, y, duration=0.75)
+    wait_for_user_idle(0.5)
+    pyautogui.moveTo(x, y, duration=0.75)
+    _check_stop()
     pyautogui.rightClick()
     return {"success": True, "action": "right_click", "coords": (x, y)}
 
@@ -166,7 +170,9 @@ def double_click(x: int, y: int) -> dict:
     _check_available()
     _check_stop()
     x, y = _clamp_coords(x, y)
-    move_to(x, y, duration=0.75)
+    wait_for_user_idle(0.5)
+    pyautogui.moveTo(x, y, duration=0.75)
+    _check_stop()
     pyautogui.doubleClick()
     return {"success": True, "action": "double_click", "coords": (x, y)}
 

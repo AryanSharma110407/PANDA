@@ -280,6 +280,8 @@ def _dispatch_action(action_type: str, params: dict, session_id: str) -> str:
         return handler(params.get("query", ""), session_id)
     elif action_type == "select_and_copy":
         return handler(params.get("target", ""), session_id)
+    elif action_type == "open_application":
+        return handler(params.get("app_name", ""), params.get("web_fallback_url", ""), session_id)
     else:
         return f"Action {action_type} executed."
 
@@ -642,29 +644,30 @@ def execute_autonomous_task(task_description: str, session_id: str = "auto_task"
         print(f"⚠️ [PANDA] Failed to build rich task context: {e}")
         
     # Search past experiences
-    print("🔍 [PANDA] Searching past experiences for similar tasks...")
-    past_experiences = []
-    try:
-        past_experiences = semantic_search_trajectories(task_description, top_k=2)
-    except Exception as e:
-        print(f"⚠️ [PANDA] Failed to load past experiences: {e}")
-        
+    # print("🔍 [PANDA] Searching past experiences for similar tasks...")
+    # past_experiences = []
+    # try:
+    #     past_experiences = semantic_search_trajectories(task_description, top_k=2)
+    # except Exception as e:
+    #     print(f"⚠️ [PANDA] Failed to load past experiences: {e}")
+    #     
+    # experiences_str = ""
+    # if past_experiences:
+    #     experiences_str = "\nPRIOR EXPERIENCES FOUND:\n"
+    #     for idx, exp in enumerate(past_experiences):
+    #         experiences_str += f"\n--- Experience {idx + 1} (Goal: '{exp['goal']}', Outcome: {exp['status']}) ---\n"
+    #         if exp.get("summary"):
+    #             experiences_str += f"Summary/Lesson: {exp['summary']}\n"
+    #         try:
+    #             steps = json.loads(exp["steps_json"])
+    #             experiences_str += "Steps executed:\n"
+    #             for step in steps:
+    #                 experiences_str += f"  - Action: {step.get('action')}({step.get('parameters')}) -> {step.get('result')}\n"
+    #         except Exception:
+    #             experiences_str += f"  (Unable to parse steps JSON)\n"
+    # else:
+    #     experiences_str = "\nNO PRIOR EXPERIENCES FOUND.\n"
     experiences_str = ""
-    if past_experiences:
-        experiences_str = "\nPRIOR EXPERIENCES FOUND:\n"
-        for idx, exp in enumerate(past_experiences):
-            experiences_str += f"\n--- Experience {idx + 1} (Goal: '{exp['goal']}', Outcome: {exp['status']}) ---\n"
-            if exp.get("summary"):
-                experiences_str += f"Summary/Lesson: {exp['summary']}\n"
-            try:
-                steps = json.loads(exp["steps_json"])
-                experiences_str += "Steps executed:\n"
-                for step in steps:
-                    experiences_str += f"  - Action: {step.get('action')}({step.get('parameters')}) -> {step.get('result')}\n"
-            except Exception:
-                experiences_str += f"  (Unable to parse steps JSON)\n"
-    else:
-        experiences_str = "\nNO PRIOR EXPERIENCES FOUND.\n"
     
     # Initialize task state
     task_state = {

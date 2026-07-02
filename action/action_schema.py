@@ -16,14 +16,12 @@ VALID_ACTIONS = {
     "drag",
     "browser_open",
     "browser_search",
-    "browser_fill",
-    "browser_click",
-    "browser_scroll",
     "system_search",
     "select_and_copy",
     "undo",
     "complete",
     "fail",
+    "open_application",
 }
 
 ACTION_SCHEMAS = {
@@ -33,16 +31,14 @@ ACTION_SCHEMAS = {
     "press":          {"required": ["key"],               "optional": [],         "description": "Press a keyboard key (e.g. 'enter', 'tab', 'escape')"},
     "scroll":         {"required": ["direction"],         "optional": ["amount"], "description": "Scroll the screen 'up' or 'down'"},
     "drag":           {"required": ["source", "target"],  "optional": ["duration"], "description": "Drag from source element to target element"},
-    "browser_open":   {"required": ["url"],               "optional": [],         "description": "Open a specific URL in the browser"},
-    "browser_search": {"required": ["query"],             "optional": ["engine"], "description": "Search the web directly (engine can be 'google', 'youtube', 'bing') WITHOUT needing to open the browser or click a search bar first"},
-    "browser_fill":   {"required": ["selector", "text"],  "optional": [],         "description": "Fill a web form field using a CSS selector"},
-    "browser_click":  {"required": ["selector"],          "optional": [],         "description": "Click a web element using a CSS selector"},
-    "browser_scroll": {"required": ["direction"],         "optional": ["amount"], "description": "Scroll the browser window 'up' or 'down'"},
-    "system_search":  {"required": ["query"],             "optional": [],         "description": "Search the OS for an app or file by pressing the Windows key, typing the query, and hitting Enter (e.g. use this to open Notepad)"},
+    "browser_open":   {"required": ["url"],               "optional": [],         "description": "Open a specific URL in the default web browser (Brave)"},
+    "browser_search": {"required": ["query"],             "optional": ["engine"], "description": "Search the web directly (engine can be 'google', 'youtube', 'bing') in the default browser WITHOUT needing to open it first"},
+    "system_search":  {"required": ["query"],             "optional": [],         "description": "Search the OS for an app or file by pressing the Windows key, typing the query, and hitting Enter"},
     "select_and_copy": {"required": ["target"],            "optional": [],         "description": "Click on a text field, label, or element, select all text (Ctrl+A), and copy it to clipboard (Ctrl+C). Returns the copied text."},
     "undo":           {"required": [],                    "optional": [],         "description": "Undo the last click or type action to recover from mistakes"},
     "complete":       {"required": [],                    "optional": [],         "description": "Signal that the current milestone or task is fully achieved"},
     "fail":           {"required": ["reason"],            "optional": [],         "description": "Signal that the task is blocked and cannot continue"},
+    "open_application": {"required": ["app_name"],         "optional": ["web_fallback_url"], "description": "Open a desktop application if installed, otherwise fall back to opening its web version in the default browser"},
 }
 
 

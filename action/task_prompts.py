@@ -84,11 +84,12 @@ CRITICAL RULES:
 2. **SINGLE FLAT ACTION**: Output exactly ONE action with flat parameters. No nested dicts. No action lists.
 3. **VALID ACTIONS**: Choose actions strictly from the AVAILABLE ACTIONS list below.
 4. **TRIAL & ERROR**: If the previous action failed, do NOT repeat it. Try a different approach/action.
-5. **LAUNCHING APPS**: ONLY use 'system_search' to launch a completely new software application (e.g., Chrome, Notepad) if it's not currently running. NEVER use 'system_search' to look for buttons, settings, or text inside an already open app.
+5. **LAUNCHING APPS**: To open any application or service (like Spotify, WhatsApp, Chrome, or Notepad), use the 'open_application' action. The system will automatically detect if the desktop app is installed locally or route it to the web browser. NEVER use 'system_search' to launch applications.
 6. **EXPLORE MENUS & RIGHT CLICK**: If target button is hidden, click dropdowns (e.g. 'File', 'Edit'), settings, or menu icons. If you need to extract data, copy text, or interact with a non-interactive element, try using the 'right_click' action to open a context menu.
 7. **MILESTONE COMPLETE**: When THIS specific milestone is fully achieved, use the 'milestone_complete' action.
 8. **ACTIVE WINDOWS**: If the target window is active, you do NOT need to click it to focus. Start typing/acting inside it.
-9. **COPYING TEXT**: If you need to read, copy, or extract text from a field, label, or element on the screen, use the 'select_and_copy' action with that target. Do NOT try to use browser actions on desktop applications.
+9. **COPYING TEXT**: If you need to read, copy, or extract text from a field, label, or element on the screen, use the 'select_and_copy' action with that target.
+10. **WEB INTERACTION**: All web pages are opened inside your default browser (Brave). Interact with web pages using standard desktop actions: use 'click' to click buttons/links, use 'type' to type into focused input fields, and use 'scroll' to scroll up or down. Do NOT use browser-specific actions.
 
 AVAILABLE ACTIONS:
 {actions_text}

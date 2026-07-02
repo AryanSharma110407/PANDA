@@ -253,7 +253,28 @@ def find_element(query: str) -> dict | None:
     try:
         desktop = ua.GetRootControl()
 
-        # ── Pass 1: search inside focused (active) window ──────────────────
+        # ── Pass 1: search inside focused (active) window first ────────────
+        active_window_ctrl = None
+        try:
+            focused = ua.GetFocusedControl()
+            if focused:
+                # Walk up to the top-level window
+                ctrl = focused
+                while ctrl.ControlType != ua.ControlType.WindowControl:
+                    parent = ctrl.GetParentControl()
+                    if parent is None or parent.ControlType == ua.ControlType.PaneControl:
+                        break
+                    ctrl = parent
+                active_window_ctrl = ctrl
+        except Exception:
+            pass
+
+        if active_window_ctrl:
+            result = _search_in_control(active_window_ctrl, query_lower, ua, max_depth=6)
+            if result:
+                return result
+
+        # ── Pass 2: Fallback to searching the entire desktop (all windows) ──
         result = _search_in_control(desktop, query_lower, ua, max_depth=6)
         if result:
             return result
