@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environment files (contains API keys/credentials)
+.env
+.env.*
+!.env.example
+
+# Large ONNX voice models
+*.onnx
+*.onnx.json
+
+# Local directories / user data
+screenshots/
+data/
+voices/
+piper/
+memory_graph.html
+*.log
+.system_generated/
+.agents/
+C:/Users/Aryan Clg/.gemini/antigravity-ide/
+*.tmp
+temp/
