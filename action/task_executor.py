@@ -356,20 +356,25 @@ def _execute_milestone(
         print("👀 \033[36mObserve:\033[0m Capturing screen state...")
         screen = _capture_screen_with_retry(session_id)
         
-        # Clean screen observations for 8B context
-        unique_texts = []
-        seen = set()
-        for t in screen.get("visible_text", []):
-            txt = t.get("text", "").strip()
-            if txt and txt not in seen:
-                seen.add(txt)
-                unique_texts.append(txt)
-                
+        # Clean and prioritize interactive semantic elements for 8B context
+        raw_elements = screen.get("semantic_elements", [])
+        
+        # Sort so interactive elements are first
+        sorted_elements = sorted(raw_elements, key=lambda x: x.get("interactive", False), reverse=True)
+        
+        # Cap to 35 elements
+        simplified_elements = []
+        for el in sorted_elements[:35]:
+            simplified_elements.append({
+                "type": el.get("type"),
+                "label": el.get("label"),
+                "interactive": el.get("interactive", False)
+            })
+            
         simplified_screen = {
             "active_window": screen.get("active_window", "Unknown"),
-            "ui_controls": screen.get("ui_controls", []),
             "summary": screen.get("summary", "No details"),
-            "visible_texts_on_screen": unique_texts[:40]
+            "semantic_elements": simplified_elements
         }
         
         # 2. ORIENT / DECIDE — Build the Actor prompt

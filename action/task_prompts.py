@@ -89,7 +89,11 @@ CRITICAL RULES:
 7. **MILESTONE COMPLETE**: When THIS specific milestone is fully achieved, use the 'milestone_complete' action.
 8. **ACTIVE WINDOWS**: If the target window is active, you do NOT need to click it to focus. Start typing/acting inside it.
 9. **COPYING TEXT**: If you need to read, copy, or extract text from a field, label, or element on the screen, use the 'select_and_copy' action with that target.
-10. **WEB INTERACTION**: All web pages are opened inside your default browser (Brave). Interact with web pages using standard desktop actions: use 'click' to click buttons/links, use 'type' to type into focused input fields, and use 'scroll' to scroll up or down. Do NOT use browser-specific actions.
+10. **SEMANTIC UI INTERACTION**: You will receive a structured list of `semantic_elements` on the screen. Each element has a `type` (e.g., "Button", "Hyperlink", "TextInput", "StaticText") and a `label`.
+    * To click a link or button, use the `click` action with the exact `label` of the target `Hyperlink` or `Button` (e.g. `{{"target": "YouTube"}}`).
+    * To enter text, target the `TextInput` element, click it, and use the `type` action.
+    * Do NOT click generic structural types (like "Pane") if a specific interactive element (like "Hyperlink") containing the target text is present.
+11. **WEB INTERACTION**: All web pages are opened inside your default browser (Brave). Interact with web pages using standard desktop actions: use 'click' to click buttons/links, use 'type' to type into focused input fields, and use 'scroll' to scroll up or down. Do NOT use browser-specific actions.
 
 AVAILABLE ACTIONS:
 {actions_text}

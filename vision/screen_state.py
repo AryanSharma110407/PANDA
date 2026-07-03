@@ -52,6 +52,7 @@ def build_screen_state(session_id: str, parent_observation_id: int | None = None
     # ── Layer 1: Windows UI Automation ────────────────────────────────────────
     active_window = "Unknown"
     ui_controls   = []
+    raw_controls  = []
 
     try:
         if ui_automation_engine.is_available():
@@ -60,10 +61,11 @@ def build_screen_state(session_id: str, parent_observation_id: int | None = None
                 active_window = focused["title"]
 
             # Grab named controls from the active window (capped for performance)
-            controls = ui_automation_engine.get_all_controls(
+            raw_controls = ui_automation_engine.get_all_controls(
                 window_title_keyword=active_window if active_window != "Unknown" else None
             )
-            ui_controls = [c["name"] for c in controls if c.get("name")][:20]
+            # Legacy string list for backward compatibility
+            ui_controls = [c["name"] for c in raw_controls if c.get("name")][:20]
     except Exception as ua_err:
         print(f"  [ScreenState] Layer 1 (UIAuto) error: {ua_err}")
 
@@ -116,6 +118,9 @@ def build_screen_state(session_id: str, parent_observation_id: int | None = None
     if ui_controls:
         summary += f" UI controls: {', '.join(ui_controls[:3])}."
 
+    from vision.semantic_ui_builder import build_semantic_ui
+    semantic_elements = build_semantic_ui(raw_controls, visible_text)
+
     return {
         "timestamp":            timestamp,
         "session_id":           session_id,
@@ -124,6 +129,7 @@ def build_screen_state(session_id: str, parent_observation_id: int | None = None
         "ui_controls":          ui_controls,
         "visible_text":         visible_text,
         "detected_elements":    detected_elements,
+        "semantic_elements":    semantic_elements,
         "summary":              summary,
         "frame_hash":           frame_hash,
     }
