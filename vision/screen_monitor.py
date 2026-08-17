@@ -19,6 +19,13 @@ from pynput import mouse, keyboard
 import memory_manager
 from vision.screen_state import build_screen_state
 
+# STDP Habit Tracker — experimental spiking neural network for learning habits
+try:
+    from action import stdp_habit_tracker
+    _stdp_available = True
+except ImportError:
+    _stdp_available = False
+
 # Global State
 _stop_event = threading.Event()
 _monitor_thread = None
@@ -72,6 +79,13 @@ def _flush_buffer(trigger_reason: str):
         with _pending_lock:
             _pending_actions.append(obs_text)
 
+        # Feed typed text to STDP habit tracker
+        if _stdp_available:
+            try:
+                stdp_habit_tracker.register_event(f"type:{text.lower().strip()}")
+            except Exception:
+                pass
+
 
 def on_click(x, y, button, pressed):
     """Callback for mouse click events."""
@@ -82,6 +96,13 @@ def on_click(x, y, button, pressed):
             obs_text = f"User clicked at ({x}, {y})"
             with _pending_lock:
                 _pending_actions.append(obs_text)
+
+            # Feed click event to STDP habit tracker
+            if _stdp_available:
+                try:
+                    stdp_habit_tracker.register_event(f"click:{x},{y}")
+                except Exception:
+                    pass
         except Exception:
             pass
 
@@ -148,6 +169,15 @@ def _monitor_loop(session_id: str, interval: float):
                 window_switched = True
                 with _pending_lock:
                     _pending_actions.append(f"Active window switched to '{active_win}'.")
+
+                # Feed window switch to STDP habit tracker
+                if _stdp_available:
+                    try:
+                        # Normalize window title to a category
+                        win_label = active_win.split(" - ")[-1].strip() if " - " in active_win else active_win
+                        stdp_habit_tracker.register_event(f"window:{win_label.lower()}")
+                    except Exception:
+                        pass
 
             # Determine if we should perform a screen capture
             has_pending = False
@@ -246,6 +276,14 @@ def stop_background_monitor():
 
     # Flush remaining keystrokes
     _flush_buffer("Shutdown")
+
+    # Save STDP habit weights before shutdown
+    if _stdp_available:
+        try:
+            stdp_habit_tracker.save_weights()
+            print("[PANDA] STDP habit weights saved.")
+        except Exception as e:
+            print(f"[PANDA] [WARN] Failed to save STDP weights: {e}")
 
     # Signal threads to stop
     _stop_event.set()

@@ -70,7 +70,17 @@ def get_actor_system_prompt(active_milestone: str, milestone_index: int, total_m
     if lessons_and_prefs:
         lessons_prefs_block = "==================================================\nLESSONS LEARNED & PREFERENCES\n==================================================\n" + "\n".join(lessons_and_prefs) + "\n==================================================\n\n"
 
-    return f"""{lessons_prefs_block}You are PANDA's Actor — an autonomous agent controlling a desktop computer.
+    # STDP Habit Tracker — inject learned behavioral patterns
+    habit_block = ""
+    try:
+        from action import stdp_habit_tracker
+        habit_summary = stdp_habit_tracker.get_habit_summary()
+        if habit_summary:
+            habit_block = "==================================================\n" + habit_summary + "\n==================================================\n\n"
+    except Exception:
+        pass
+
+    return f"""{lessons_prefs_block}{habit_block}You are PANDA's Actor — an autonomous agent controlling a desktop computer.
 You are working on milestone {milestone_index + 1} of {total_milestones}.
 
 YOUR CURRENT MILESTONE:
